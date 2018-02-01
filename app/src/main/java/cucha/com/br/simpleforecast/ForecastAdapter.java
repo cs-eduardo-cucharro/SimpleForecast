@@ -57,10 +57,12 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
 
     class ForecastViewHolder extends RecyclerView.ViewHolder {
         private final TextView textView;
+        private final View view;
 
         ForecastViewHolder(View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.textViewForecast);
+            view = itemView;
         }
 
         void bind(final WeatherResponse.ListBean bean) {
@@ -72,7 +74,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
             String s = formatter.format(date);
 
             textView.setText(s + " - " + String.valueOf(temp) + " graus farenheit");
-            textView.setOnClickListener(new View.OnClickListener() {
+            view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if(listener != null) {

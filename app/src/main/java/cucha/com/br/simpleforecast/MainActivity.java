@@ -2,6 +2,7 @@ package cucha.com.br.simpleforecast;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.L
     private ForecastAdapter adapter;
     private RecyclerView recyclerView;
     private ProgressBar progress;
+    private boolean isPremium = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +62,15 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.L
     }
 
     private void setupFab() {
-        findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fab = findViewById(R.id.fab);
+
+        if(!isPremium) {
+            fab.setVisibility(View.GONE);
+        } else {
+            fab.setVisibility(View.VISIBLE);
+        }
+
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, getString(R.string.feature_premium), Toast.LENGTH_SHORT).show();
@@ -78,11 +88,13 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.L
                         dialog.dismiss();
                         finish();
                     }
-                });
+                }).create().show();
     }
 
     private void setupProgress() {
         progress = findViewById(R.id.progress);
+
+
     }
 
     private void setupRecycler() {

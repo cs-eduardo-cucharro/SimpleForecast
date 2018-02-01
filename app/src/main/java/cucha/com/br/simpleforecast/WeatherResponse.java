@@ -1,6 +1,9 @@
 package cucha.com.br.simpleforecast;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -133,7 +136,7 @@ public class WeatherResponse {
         }
     }
 
-    public static class ListBean {
+    public static class ListBean implements Parcelable {
         /**
          * dt : 1487246400
          * main : {"temp":286.67,"temp_min":281.556,"temp_max":286.67,"pressure":972.73,"sea_level":1046.46,"grnd_level":972.73,"humidity":75,"temp_kf":5.11}
@@ -150,11 +153,41 @@ public class WeatherResponse {
         private MainBean main;
         private CloudsBean clouds;
         private WindBean wind;
-        private SysBean sys;
         private String dt_txt;
-        private RainBean rain;
-        private SnowBean snow;
-        private List<WeatherBean> weather;
+
+        protected ListBean(Parcel in) {
+            dt = in.readInt();
+            main = in.readParcelable(MainBean.class.getClassLoader());
+            clouds = in.readParcelable(CloudsBean.class.getClassLoader());
+            wind = in.readParcelable(WindBean.class.getClassLoader());
+            dt_txt = in.readString();
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(dt);
+            dest.writeParcelable(main, flags);
+            dest.writeParcelable(clouds, flags);
+            dest.writeParcelable(wind, flags);
+            dest.writeString(dt_txt);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<ListBean> CREATOR = new Creator<ListBean>() {
+            @Override
+            public ListBean createFromParcel(Parcel in) {
+                return new ListBean(in);
+            }
+
+            @Override
+            public ListBean[] newArray(int size) {
+                return new ListBean[size];
+            }
+        };
 
         public int getDt() {
             return dt;
@@ -188,14 +221,6 @@ public class WeatherResponse {
             this.wind = wind;
         }
 
-        public SysBean getSys() {
-            return sys;
-        }
-
-        public void setSys(SysBean sys) {
-            this.sys = sys;
-        }
-
         public String getDt_txt() {
             return dt_txt;
         }
@@ -204,31 +229,7 @@ public class WeatherResponse {
             this.dt_txt = dt_txt;
         }
 
-        public RainBean getRain() {
-            return rain;
-        }
-
-        public void setRain(RainBean rain) {
-            this.rain = rain;
-        }
-
-        public SnowBean getSnow() {
-            return snow;
-        }
-
-        public void setSnow(SnowBean snow) {
-            this.snow = snow;
-        }
-
-        public List<WeatherBean> getWeather() {
-            return weather;
-        }
-
-        public void setWeather(List<WeatherBean> weather) {
-            this.weather = weather;
-        }
-
-        public static class MainBean {
+        public static class MainBean implements Parcelable {
             /**
              * temp : 286.67
              * temp_min : 281.556
@@ -248,6 +249,29 @@ public class WeatherResponse {
             private double grnd_level;
             private int humidity;
             private double temp_kf;
+
+            protected MainBean(Parcel in) {
+                temp = in.readDouble();
+                temp_min = in.readDouble();
+                temp_max = in.readDouble();
+                pressure = in.readDouble();
+                sea_level = in.readDouble();
+                grnd_level = in.readDouble();
+                humidity = in.readInt();
+                temp_kf = in.readDouble();
+            }
+
+            public static final Creator<MainBean> CREATOR = new Creator<MainBean>() {
+                @Override
+                public MainBean createFromParcel(Parcel in) {
+                    return new MainBean(in);
+                }
+
+                @Override
+                public MainBean[] newArray(int size) {
+                    return new MainBean[size];
+                }
+            };
 
             public double getTemp() {
                 return temp;
@@ -312,14 +336,47 @@ public class WeatherResponse {
             public void setTemp_kf(double temp_kf) {
                 this.temp_kf = temp_kf;
             }
+
+            @Override
+            public int describeContents() {
+                return 0;
+            }
+
+            @Override
+            public void writeToParcel(Parcel dest, int flags) {
+                dest.writeDouble(temp);
+                dest.writeDouble(temp_min);
+                dest.writeDouble(temp_max);
+                dest.writeDouble(pressure);
+                dest.writeDouble(sea_level);
+                dest.writeDouble(grnd_level);
+                dest.writeInt(humidity);
+                dest.writeDouble(temp_kf);
+            }
         }
 
-        public static class CloudsBean {
+        public static class CloudsBean implements Parcelable {
             /**
              * all : 0
              */
 
             private int all;
+
+            protected CloudsBean(Parcel in) {
+                all = in.readInt();
+            }
+
+            public static final Creator<CloudsBean> CREATOR = new Creator<CloudsBean>() {
+                @Override
+                public CloudsBean createFromParcel(Parcel in) {
+                    return new CloudsBean(in);
+                }
+
+                @Override
+                public CloudsBean[] newArray(int size) {
+                    return new CloudsBean[size];
+                }
+            };
 
             public int getAll() {
                 return all;
@@ -328,9 +385,19 @@ public class WeatherResponse {
             public void setAll(int all) {
                 this.all = all;
             }
+
+            @Override
+            public int describeContents() {
+                return 0;
+            }
+
+            @Override
+            public void writeToParcel(Parcel dest, int flags) {
+                dest.writeInt(all);
+            }
         }
 
-        public static class WindBean {
+        public static class WindBean implements Parcelable {
             /**
              * speed : 1.81
              * deg : 247.501
@@ -338,6 +405,23 @@ public class WeatherResponse {
 
             private double speed;
             private double deg;
+
+            protected WindBean(Parcel in) {
+                speed = in.readDouble();
+                deg = in.readDouble();
+            }
+
+            public static final Creator<WindBean> CREATOR = new Creator<WindBean>() {
+                @Override
+                public WindBean createFromParcel(Parcel in) {
+                    return new WindBean(in);
+                }
+
+                @Override
+                public WindBean[] newArray(int size) {
+                    return new WindBean[size];
+                }
+            };
 
             public double getSpeed() {
                 return speed;
@@ -354,101 +438,16 @@ public class WeatherResponse {
             public void setDeg(double deg) {
                 this.deg = deg;
             }
-        }
 
-        public static class SysBean {
-            /**
-             * pod : d
-             */
-
-            private String pod;
-
-            public String getPod() {
-                return pod;
+            @Override
+            public int describeContents() {
+                return 0;
             }
 
-            public void setPod(String pod) {
-                this.pod = pod;
-            }
-        }
-
-        public static class RainBean {
-            /**
-             * 3h : 0.32
-             */
-
-            @SerializedName("3h")
-            private double _$3h;
-
-            public double get_$3h() {
-                return _$3h;
-            }
-
-            public void set_$3h(double _$3h) {
-                this._$3h = _$3h;
-            }
-        }
-
-        public static class SnowBean {
-            /**
-             * 3h : 0.0775
-             */
-
-            @SerializedName("3h")
-            private double _$3h;
-
-            public double get_$3h() {
-                return _$3h;
-            }
-
-            public void set_$3h(double _$3h) {
-                this._$3h = _$3h;
-            }
-        }
-
-        public static class WeatherBean {
-            /**
-             * id : 800
-             * main : Clear
-             * description : clear sky
-             * icon : 01d
-             */
-
-            private int id;
-            private String main;
-            private String description;
-            private String icon;
-
-            public int getId() {
-                return id;
-            }
-
-            public void setId(int id) {
-                this.id = id;
-            }
-
-            public String getMain() {
-                return main;
-            }
-
-            public void setMain(String main) {
-                this.main = main;
-            }
-
-            public String getDescription() {
-                return description;
-            }
-
-            public void setDescription(String description) {
-                this.description = description;
-            }
-
-            public String getIcon() {
-                return icon;
-            }
-
-            public void setIcon(String icon) {
-                this.icon = icon;
+            @Override
+            public void writeToParcel(Parcel dest, int flags) {
+                dest.writeDouble(speed);
+                dest.writeDouble(deg);
             }
         }
     }

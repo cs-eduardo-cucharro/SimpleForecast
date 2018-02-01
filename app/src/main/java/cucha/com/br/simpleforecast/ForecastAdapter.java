@@ -18,11 +18,17 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
 
     private final Calendar calendar;
     private final SimpleDateFormat formatter;
+    private final Listener listener;
     private List<WeatherResponse.ListBean> beanList = new ArrayList<>();
 
-    public ForecastAdapter() {
+    interface Listener {
+        void itemSelected(WeatherResponse.ListBean bean);
+    }
+
+    public ForecastAdapter(Listener listener) {
         calendar = Calendar.getInstance();
         formatter = new SimpleDateFormat("hh:mm", Locale.getDefault());
+        this.listener = listener;
     }
 
     @Override
@@ -57,7 +63,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
             textView = itemView.findViewById(R.id.textViewForecast);
         }
 
-        void bind(WeatherResponse.ListBean bean) {
+        void bind(final WeatherResponse.ListBean bean) {
             double temp = bean.getMain().getTemp();
             int dt = bean.getDt();
 
@@ -66,6 +72,14 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
             String s = formatter.format(date);
 
             textView.setText(s + " - " + String.valueOf(temp) + " graus farenheit");
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(listener != null) {
+                        listener.itemSelected(bean);
+                    }
+                }
+            });
         }
     }
 }
